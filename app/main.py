@@ -148,6 +148,57 @@ if df is not None:
         else:
             st.info("No changes were made.")
 
+        st.divider()
+        st.subheader("⚙️ Transform Options")
+
+        with st.form("transform_form"):
+            col_t1, col_t2 = st.columns(2)
+
+            with col_t1:
+                do_encode = st.checkbox("Encode categorical columns", value=True)
+                encode_method = st.selectbox(
+                    "Encoding method",
+                    ["onehot", "label"],
+                    help="One-hot: creates new columns. Label: converts to numbers."
+                )
+
+            with col_t2:
+                do_normalize = st.checkbox("Normalize numeric columns", value=True)
+                norm_method = st.selectbox(
+                    "Normalization method",
+                    ["minmax", "standard", "log"],
+                    help="MinMax: [0,1]. Standard: mean=0 std=1. Log: log1p transform."
+                )
+
+            run_transform = st.form_submit_button("⚙️ Run Transforms", use_container_width=True)
+
+        if run_transform:
+            from utils.transformer import encode_categoricals, normalize_numerics
+
+            transformed_df = cleaned_df.copy()
+            transform_log = []
+
+            if do_encode:
+                transformed_df, enc_report = encode_categoricals(transformed_df, encode_method)
+                for msg in enc_report:
+                    transform_log.append(f"✅ Encode: {msg}")
+
+            if do_normalize:
+                transformed_df, norm_report = normalize_numerics(transformed_df, norm_method)
+                for msg in norm_report:
+                    transform_log.append(f"✅ Normalize: {msg}")
+
+            st.session_state["transformed_df"] = transformed_df
+
+            st.success("Transforms complete!")
+
+            st.subheader("📋 Transform Log")
+            if transform_log:
+                for log in transform_log:
+                    st.markdown(f"- {log}")
+            else:
+                st.info("No transforms were applied.")
+
         st.subheader("Cleaned Data Preview")
         st.dataframe(cleaned_df.head(20), use_container_width=True)
 
