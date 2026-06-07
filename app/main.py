@@ -2,29 +2,76 @@ import streamlit as st
 import pandas as pd
 from utils.ingestor import load_from_upload, load_from_url, get_basic_info
 
-st.set_page_config(page_title="Smart Data Cleaner", page_icon="🧹", layout="wide")
+st.set_page_config(
+    page_title="Smart Data Cleaner",
+    page_icon="🧹",
+    layout="wide"
+)
 
-st.title("🧹 Smart Data Cleaner")
-st.markdown("Upload a dataset or paste a URL — get back a clean, ML-ready file.")
+# ── Load CSS ──────────────────────────────────────────────────────────────────
+def load_css():
+    with open("style.css") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+load_css()
+
+# ── Header ────────────────────────────────────────────────────────────────────
+st.markdown("""
+    <div style="display:flex; align-items:center; gap:16px; padding:1.5rem 0 0.5rem 0;">
+        <div style="
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border-radius: 14px;
+            width: 52px; height: 52px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem;">🧹</div>
+        <div>
+            <h1 style="margin:0; font-size:1.9rem; font-weight:700;
+                       color:#f1f5f9; letter-spacing:-0.5px;">
+                Smart Data Cleaner
+            </h1>
+            <p style="margin:0; color:#64748b; font-size:0.9rem;">
+                Upload a dataset or paste a URL — get back a clean, ML-ready file.
+            </p>
+        </div>
+    </div>
+""", unsafe_allow_html=True)
 st.divider()
 
-# initialise step
+# ── Init step ─────────────────────────────────────────────────────────────────
 if "step" not in st.session_state:
     st.session_state["step"] = 1
 
-# progress indicator
-steps = ["1 · Load", "2 · EDA", "3 · Clean", "4 · Transform", "5 · Download"]
-cols = st.columns(len(steps))
-for i, (col, label) in enumerate(zip(cols, steps), start=1):
-    if i == st.session_state["step"]:
-        col.markdown(f"**:blue[{label}]**")
-    elif i < st.session_state["step"]:
-        col.markdown(f"~~{label}~~")
-    else:
-        col.markdown(f"{label}")
-st.divider()
+# ── Progress bar ──────────────────────────────────────────────────────────────
+steps = ["📂 Load", "📊 EDA", "🧹 Clean", "⚙️ Transform", "📥 Download"]
+current = st.session_state["step"]
 
-# ── STEP 1: LOAD ─────────────────────────────────────────────────────────────
+progress_html = '<div style="display:flex; gap:8px; margin-bottom:1.5rem;">'
+for i, label in enumerate(steps, start=1):
+    if i == current:
+        progress_html += f"""
+            <div style="flex:1; background:#2563eb; color:#fff;
+                        border-radius:8px; padding:8px 4px;
+                        text-align:center; font-size:0.8rem; font-weight:600;">
+                {label}
+            </div>"""
+    elif i < current:
+        progress_html += f"""
+            <div style="flex:1; background:#052e16; color:#4ade80;
+                        border-radius:8px; padding:8px 4px;
+                        text-align:center; font-size:0.8rem; font-weight:500;">
+                ✓ {label}
+            </div>"""
+    else:
+        progress_html += f"""
+            <div style="flex:1; background:#111111; color:#475569;
+                        border-radius:8px; padding:8px 4px;
+                        text-align:center; font-size:0.8rem;">
+                {label}
+            </div>"""
+progress_html += '</div>'
+st.markdown(progress_html, unsafe_allow_html=True)
+
+# ── STEP 1: LOAD ──────────────────────────────────────────────────────────────
 if st.session_state["step"] == 1:
     input_method = st.radio("How do you want to load your data?",
                             ["Upload a file", "Paste a URL"], horizontal=True)
@@ -41,7 +88,6 @@ if st.session_state["step"] == 1:
                     st.rerun()
             except Exception as e:
                 st.error(f"Error loading file: {e}")
-
     else:
         url = st.text_input("Enter the direct URL to a CSV, JSON, or Excel file")
         if url:
@@ -55,7 +101,7 @@ if st.session_state["step"] == 1:
                 except Exception as e:
                     st.error(f"Error: {e}")
 
-# ── STEP 2: EDA ──────────────────────────────────────────────────────────────
+# ── STEP 2: EDA ───────────────────────────────────────────────────────────────
 elif st.session_state["step"] == 2:
     df = st.session_state["df"]
     info = get_basic_info(df)
@@ -90,10 +136,9 @@ elif st.session_state["step"] == 2:
         st.session_state["step"] = 3
         st.rerun()
 
-# ── STEP 3: CLEAN ────────────────────────────────────────────────────────────
+# ── STEP 3: CLEAN ─────────────────────────────────────────────────────────────
 elif st.session_state["step"] == 3:
     df = st.session_state["df"]
-
     st.subheader("🧹 Cleaning Options")
 
     with st.form("cleaning_form"):
@@ -165,10 +210,9 @@ elif st.session_state["step"] == 3:
             st.session_state["step"] = 4
             st.rerun()
 
-# ── STEP 4: TRANSFORM ────────────────────────────────────────────────────────
+# ── STEP 4: TRANSFORM ─────────────────────────────────────────────────────────
 elif st.session_state["step"] == 4:
     cleaned_df = st.session_state["cleaned_df"]
-
     st.subheader("⚙️ Transform Options")
 
     with st.form("transform_form"):
@@ -219,7 +263,7 @@ elif st.session_state["step"] == 4:
             st.session_state["step"] = 5
             st.rerun()
 
-# ── STEP 5: DOWNLOAD ─────────────────────────────────────────────────────────
+# ── STEP 5: DOWNLOAD ──────────────────────────────────────────────────────────
 elif st.session_state["step"] == 5:
     st.subheader("📥 Download Your Clean Dataset")
 
@@ -229,11 +273,14 @@ elif st.session_state["step"] == 5:
     if final_df is not None:
         change_log    = st.session_state.get("change_log", [])
         transform_log = st.session_state.get("transform_log", [])
+        original_df   = st.session_state["df"]
 
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Final Rows",    final_df.shape[0])
-        c2.metric("Final Columns", final_df.shape[1])
-        c3.metric("Missing Values", int(final_df.isnull().sum().sum()))
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Original Rows",    original_df.shape[0])
+        col2.metric("Final Rows",        final_df.shape[0],
+                    delta=final_df.shape[0] - original_df.shape[0])
+        col3.metric("Final Columns",     final_df.shape[1])
+        col4.metric("Missing Values",    int(final_df.isnull().sum().sum()))
 
         st.subheader("Final Data Preview")
         st.dataframe(final_df.head(20), use_container_width=True)
@@ -243,7 +290,10 @@ elif st.session_state["step"] == 5:
         if all_logs:
             for log in all_logs:
                 st.markdown(f"- {log}")
+        else:
+            st.info("No changes were logged.")
 
+        st.divider()
         csv = final_df.to_csv(index=False).encode("utf-8")
         st.download_button(
             label="⬇️ Download Cleaned CSV",
@@ -252,6 +302,10 @@ elif st.session_state["step"] == 5:
             mime="text/csv",
             use_container_width=True
         )
+
+        if st.button("← Back to Transform", use_container_width=True):
+            st.session_state["step"] = 4
+            st.rerun()
 
         if st.button("🔄 Start Over", use_container_width=True):
             for key in ["df", "cleaned_df", "transformed_df",

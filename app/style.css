@@ -1,0 +1,199 @@
+/* ── Base ── */
+[data-testid="stAppViewContainer"] {
+    background-color: #0a0a0a;
+}
+
+[data-testid="stHeader"] {
+    background-color: #0a0a0a;
+    border-bottom: 1px solid #1f1f1f;
+}
+
+[data-testid="stMain"] {
+    background-color: #0a0a0a;
+}
+
+/* ── Main text ── */
+html, body, [data-testid="stMarkdownContainer"] p,
+[data-testid="stText"], label, .stRadio label {
+    color: #e2e8f0 !important;
+}
+
+h1, h2, h3, h4 {
+    color: #f1f5f9 !important;
+}
+
+/* ── Divider ── */
+hr {
+    border-color: #1f1f1f !important;
+}
+
+/* ── Metric cards ── */
+[data-testid="stMetric"] {
+    background-color: #111111;
+    border: 1px solid #1f1f1f;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+[data-testid="stMetricLabel"] {
+    color: #94a3b8 !important;
+}
+
+[data-testid="stMetricValue"] {
+    color: #f1f5f9 !important;
+}
+
+[data-testid="stMetricDelta"] {
+    color: #22c55e !important;
+}
+
+/* ── Buttons ── */
+.stButton > button {
+    background-color: #2563eb;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.stButton > button:hover {
+    background-color: #1d4ed8;
+    color: #ffffff !important;
+}
+
+/* ── Download button ── */
+.stDownloadButton > button {
+    background-color: #16a34a;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.stDownloadButton > button:hover {
+    background-color: #15803d;
+    color: #ffffff !important;
+}
+
+/* ── Form ── */
+[data-testid="stForm"] {
+    background-color: #111111;
+    border: 1px solid #1f1f1f;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+/* ── Inputs ── */
+[data-testid="stTextInput"] input,
+[data-testid="stSelectbox"] div,
+textarea {
+    background-color: #1a1a1a !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #2d2d2d !important;
+    border-radius: 8px !important;
+}
+
+/* ── Selectbox ── */
+[data-baseweb="select"] {
+    background-color: #1a1a1a !important;
+}
+
+[data-baseweb="select"] * {
+    background-color: #1a1a1a !important;
+    color: #e2e8f0 !important;
+}
+
+/* ── File uploader ── */
+[data-testid="stFileUploader"] {
+    background-color: #111111;
+    border: 2px dashed #2563eb !important;
+    border-radius: 12px;
+}
+
+[data-testid="stFileUploader"] * {
+    color: #94a3b8 !important;
+}
+
+/* ── Dataframe ── */
+[data-testid="stDataFrame"] {
+    border-radius: 8px;
+    border: 1px solid #1f1f1f;
+}
+
+/* ── Tabs ── */
+.stTabs [data-baseweb="tab-list"] {
+    background-color: #111111;
+    border-radius: 8px;
+    gap: 4px;
+    padding: 4px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    border-radius: 6px;
+    color: #94a3b8 !important;
+    font-weight: 500;
+}
+
+.stTabs [aria-selected="true"] {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+}
+
+/* ── Radio ── */
+[data-testid="stRadio"] > div {
+    background-color: #111111;
+    border-radius: 8px;
+    padding: 8px;
+    gap: 8px;
+}
+
+/* ── Success / Error / Info ── */
+[data-testid="stAlert"] {
+    border-radius: 8px;
+    border: none;
+}
+
+.stSuccess {
+    background-color: #052e16 !important;
+    color: #bbf7d0 !important;
+}
+
+.stError {
+    background-color: #1c0505 !important;
+    color: #fecaca !important;
+}
+
+.stInfo {
+    background-color: #0c1a2e !important;
+    color: #bfdbfe !important;
+}
+
+/* ── Checkbox ── */
+[data-testid="stCheckbox"] label {
+    color: #e2e8f0 !important;
+}
+
+/* ── Spinner ── */
+[data-testid="stSpinner"] {
+    color: #2563eb !important;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2d2d2d;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #3d3d3d;
+}
