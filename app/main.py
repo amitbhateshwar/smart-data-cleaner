@@ -62,6 +62,7 @@ if df is not None:
         "Missing %": [f"{df[c].isnull().mean()*100:.1f}%" for c in info["column_names"]],
     })
     st.dataframe(dtype_df, use_container_width=True)
+    
     st.divider()
     st.subheader("📊 Exploratory Data Analysis")
 
@@ -80,4 +81,79 @@ if df is not None:
         from utils.profiler import plot_distributions
         plot_distributions(df)
 
+    st.divider()
+    st.subheader("🧹 Cleaning Options")
+
+    with st.form("cleaning_form"):
+        col_a, col_b = st.columns(2)
+
+        with col_a:
+            remove_dupes = st.checkbox("Remove duplicate rows", value=True)
+            fix_types = st.checkbox("Auto-fix data types", value=True)
+            handle_missing = st.checkbox("Handle missing values", value=True)
+            missing_strategy = st.selectbox(
+                "Missing value strategy",
+                ["mean", "median", "zero", "drop rows"]
+            )
+
+        with col_b:
+            handle_out = st.checkbox("Handle outliers", value=True)
+            outlier_method = st.selectbox(
+                "Outlier method",
+                ["clip", "remove"]
+            )
+
+        run_cleaning = st.form_submit_button("🚀 Run Cleaning", use_container_width=True)
+
+    if run_cleaning:
+        from utils.cleaner import (
+            remove_duplicates, fix_dtypes,
+            handle_missing_values, remove_missing_rows, handle_outliers
+        )
+
+        cleaned_df = df.copy()
+        change_log = []
+
+        if remove_dupes:
+            cleaned_df, n = remove_duplicates(cleaned_df)
+            change_log.append(f"✅ Removed **{n}** duplicate rows")
+
+        if fix_types:
+            cleaned_df, type_changes = fix_dtypes(cleaned_df)
+            for c in type_changes:
+                change_log.append(f"✅ Fixed dtype: {c}")
+
+        if handle_missing:
+            if missing_strategy == "drop rows":
+                cleaned_df, n = remove_missing_rows(cleaned_df)
+                change_log.append(f"✅ Dropped **{n}** rows with missing values")
+            else:
+                cleaned_df, missing_report = handle_missing_values(cleaned_df, missing_strategy)
+                for col, msg in missing_report.items():
+                    change_log.append(f"✅ `{col}`: {msg}")
+
+        if handle_out:
+            cleaned_df, outlier_report = handle_outliers(cleaned_df, outlier_method)
+            for col, msg in outlier_report.items():
+                change_log.append(f"✅ `{col}`: {msg}")
+
+        st.session_state["cleaned_df"] = cleaned_df
+
+        st.success("Cleaning complete!")
+
+        st.subheader("📋 Change Log")
+        if change_log:
+            for log in change_log:
+                st.markdown(f"- {log}")
+        else:
+            st.info("No changes were made.")
+
+        st.subheader("Cleaned Data Preview")
+        st.dataframe(cleaned_df.head(20), use_container_width=True)
+
+        after_col1, after_col2, after_col3 = st.columns(3)
+        after_col1.metric("Rows", cleaned_df.shape[0], delta=cleaned_df.shape[0] - df.shape[0])
+        after_col2.metric("Columns", cleaned_df.shape[1])
+        after_col3.metric("Missing Values", int(cleaned_df.isnull().sum().sum()))
+    
     st.session_state["df"] = df
