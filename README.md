@@ -15,7 +15,7 @@ clean, processed dataset in seconds.
 ## Getting Started
 
 ### 1. Clone the repo
-git clone https://github.com/YOUR_USERNAME/smart-data-cleaner.git
+git clone https://github.com/amitbhateshwar/smart-data-cleaner.git
 cd smart-data-cleaner
 
 ### 2. Create and activate virtual environment
