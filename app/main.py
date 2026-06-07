@@ -62,5 +62,22 @@ if df is not None:
         "Missing %": [f"{df[c].isnull().mean()*100:.1f}%" for c in info["column_names"]],
     })
     st.dataframe(dtype_df, use_container_width=True)
+    st.divider()
+    st.subheader("📊 Exploratory Data Analysis")
+
+    eda_tab1, eda_tab2, eda_tab3 = st.tabs(["Column Stats", "Null Heatmap", "Distributions"])
+
+    with eda_tab1:
+        from utils.profiler import get_column_stats
+        stats_df = get_column_stats(df)
+        st.dataframe(stats_df, use_container_width=True)
+
+    with eda_tab2:
+        from utils.profiler import plot_null_heatmap
+        plot_null_heatmap(df)
+
+    with eda_tab3:
+        from utils.profiler import plot_distributions
+        plot_distributions(df)
 
     st.session_state["df"] = df
