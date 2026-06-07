@@ -1,5 +1,7 @@
 # 🧹 Smart Data Cleaner
 
+🌐 **Live App:** [smart-data-cleaner-tool.streamlit.app](https://smart-data-cleaner-tool.streamlit.app)
+
 An ML-ready data cleaning pipeline built with Python and Streamlit.
 Upload a CSV, JSON, or Excel file (or paste a URL) and get back a
 clean, processed dataset in seconds.
